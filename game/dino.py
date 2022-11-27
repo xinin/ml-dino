@@ -23,6 +23,7 @@ class Dino:
         self.rect = self.action[0].get_rect(bottomleft=(self.initial_x, self.initial_y))
         self.speed_y = 0
         self.steps = 0
+        self.death = False
 
     def jump(self):
         if self.action != Dino.JUMPING:
@@ -34,8 +35,6 @@ class Dino:
         if self.action != Dino.JUMPING:
             self.action = Dino.DUCKING
             self.rect = self.action[0].get_rect(bottomleft=(self.initial_x, self.initial_y))
-        else:
-            print("esta saltando",self.rect.y,self.initial_y,self.rect.y >= self.initial_y)
 
     def running(self):
         if self.action != Dino.JUMPING:
@@ -56,8 +55,11 @@ class Dino:
                 self.rect.y = self.initial_y
                 self.rect = self.action[0].get_rect(bottomleft=(self.initial_x, self.initial_y))
                 self.speed_y = 0
-
+        
+        self.steps +=1
         SCREEN.blit(self.action[self.steps % 2], self.rect)
         pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
 
+    def die(self):
+        self.death = True
 

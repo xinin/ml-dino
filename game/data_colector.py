@@ -13,7 +13,6 @@ class DataCollector:
      
         for obstacle in obs:
            if obstacle.rect.x >= dino.rect.x:
-
                 file = None
                 if not Path(filename).is_file():
                     with open(filename, 'w') as file:
@@ -37,7 +36,7 @@ class DataCollector:
                         )
                         file.close()
 
-                pygame.draw.rect(SCREEN, (255,0,0), pygame.Rect(obstacle.rect.x, obstacle.rect.y, obstacle.rect.width, obstacle.rect.height),  5, 5)
+                #pygame.draw.rect(SCREEN, (255,0,0), pygame.Rect(obstacle.rect.x, obstacle.rect.y, obstacle.rect.width, obstacle.rect.height),  5, 5)
                 break
         
 
