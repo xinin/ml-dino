@@ -5,9 +5,9 @@ from csv import writer
 
 class DataCollector:
 
-    header = ['distance_next', 'x_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed']
+    header = ['distance_next', 'x_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed', 'action']
 
-    def write_data(filename, dino, obstacles, game_speed, action, SCREEN):
+    def write_data(filename, dino, obstacles, game_speed, action):
         
         obs = sorted(obstacles, key=lambda x: x.rect.x)    
      

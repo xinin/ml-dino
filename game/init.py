@@ -37,7 +37,6 @@ def init():
     while dead_dinos < max_dinos:
         screen.fill(WHITE)
         pygame.draw.line(screen, BLACK, (0, SCREEN_HEIGHT*0.5), (SCREEN_WIDTH, SCREEN_HEIGHT*0.5), 1)
-
         pygame.event.get()
 
         for obstacle in obstacles:
@@ -62,7 +61,7 @@ def init():
                 elif action == 2:
                     dino.duck()
 
-                DataCollector.write_data(folder+'/dino_'+str(index)+'.csv', dino, obstacles, game_speed, action, screen)
+                DataCollector.write_data(folder+'/dino_'+str(index)+'.csv', dino, obstacles, game_speed, action)
                 dino.draw(screen)
 
         if steps % 20 == 0:
@@ -84,6 +83,5 @@ def init():
         steps = steps + 1
         #aumentar la velocidad segun los puntos
         #game_speed = game_speed +0.05
-
 
 init()

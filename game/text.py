@@ -1,8 +1,9 @@
-from datetime import datetime
+import pickle
+import pandas as pd
 
-dt = datetime.now()
+loaded_model = pickle.load(open('../machine_learning/models/model_1669569137.sav', 'rb'))
 
-ts = datetime.timestamp(dt)
+input = [[340,580,332,97,68,272,20]]
 
-print("Date and time is:", dt)
-print("Timestamp is:", int(ts))
+pred = loaded_model.predict(input)
+print(pred)
