@@ -19,6 +19,8 @@ def init():
     pygame.init()
     pygame.display.set_caption('Diego Prieto Dino ML')
 
+    font = pygame.font.Font('freesansbold.ttf', 20)
+
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0 , 32)
 
@@ -36,6 +38,18 @@ def init():
     #Run the game loop
     while dead_dinos < max_dinos:
         screen.fill(WHITE)
+        array_text = [
+            'Dinos Alive: '+str(max_dinos-dead_dinos),
+            'Iteration: TODO',
+            'Max Score: TODO',
+            'Current Score:'+str(steps)
+        ]
+        for i,t in enumerate(array_text):
+            text = font.render(t, True, BLACK, WHITE)
+            textRect = text.get_rect()
+            textRect.y += 35*i
+            screen.blit(text, textRect)
+
         pygame.draw.line(screen, BLACK, (0, SCREEN_HEIGHT*0.5), (SCREEN_WIDTH, SCREEN_HEIGHT*0.5), 1)
         pygame.event.get()
 
