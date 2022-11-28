@@ -19,16 +19,10 @@ from sklearn.model_selection import GridSearchCV
 
 df = pd.read_csv('../game/data/1669567704/72_dino_8.csv').dropna()
 
-print(df)
-print(df['action'].value_counts())
-
 x = df.drop('action', axis=1)
 y = df['action']
 
 trainX, testX, trainY, testY = train_test_split(x, y, test_size = 0.2)
-
-print('testX')
-print(testX)
 
 sc=StandardScaler()
 
@@ -36,16 +30,26 @@ scaler = sc.fit(trainX)
 trainX_scaled = scaler.transform(trainX)
 testX_scaled = scaler.transform(testX)
 
-print('testX_scaled')
-print(testX_scaled)
-
-mlp_clf = MLPClassifier(hidden_layer_sizes=(7,1), max_iter = 300,activation = 'relu', solver = 'adam')
-
+mlp_clf = MLPClassifier(hidden_layer_sizes=(7,1), max_iter = 50,activation = 'relu', solver = 'adam', shuffle = True)
 mlp_clf.fit(trainX_scaled, trainY)
 
-y_pred = mlp_clf.predict(testX_scaled)
+#https://python-course.eu/machine-learning/neural-networks-with-scikit.php
 
-print('Accuracy: {:.2f}'.format(accuracy_score(testY, y_pred)))
+print("weights between input and first hidden layer:")
+print(mlp_clf.coefs_[0])
+print("\nweights between first hidden and second hidden layer:")
+print(mlp_clf.coefs_[1])
+
+print("Bias values for first hidden layer:")
+print(mlp_clf.intercepts_[0])
+print("\nBias values for second hidden layer:")
+print(mlp_clf.intercepts_[1])
+
+
+#
+#y_pred = mlp_clf.predict(testX_scaled)
+#
+#print('Accuracy: {:.2f}'.format(accuracy_score(testY, y_pred)))
 
 #fig = plot_confusion_matrix(mlp_clf, testX_scaled, testY, display_labels=mlp_clf.classes_)
 #fig.figure_.suptitle("Confusion Matrix for Winequality Dataset")
@@ -57,7 +61,7 @@ print('Accuracy: {:.2f}'.format(accuracy_score(testY, y_pred)))
 #plt.ylabel('Cost')
 #plt.show()
 
-dt = datetime.now()
-ts = datetime.timestamp(dt)
-model_name = 'models/model_'+str(int(ts))+'.sav'
-pickle.dump(mlp_clf, open(model_name, 'wb'))
+#dt = datetime.now()
+#ts = datetime.timestamp(dt)
+#model_name = 'models/model_'+str(int(ts))+'.sav'
+#pickle.dump(mlp_clf, open(model_name, 'wb'))

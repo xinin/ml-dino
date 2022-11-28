@@ -11,3 +11,7 @@ https://analyticsindiamag.com/a-beginners-guide-to-scikit-learns-mlpclassifier/
 https://michael-fuchs-python.netlify.app/2021/02/03/nn-multi-layer-perceptron-classifier-mlpclassifier/
 
 
+TODO
+
+hacer que en cada iteracion coja los logs mejores y los use para entrenar
+mirar como meter mutaciones
