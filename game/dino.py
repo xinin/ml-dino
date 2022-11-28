@@ -1,22 +1,24 @@
 import pygame
 import os
+import pickle
+import random
 
 class Dino:
 
     RUNNING = [
-        pygame.image.load(os.path.join("assets/Dino", "DinoRun1.png")),
-        pygame.image.load(os.path.join("assets/Dino", "DinoRun2.png")),
+        pygame.image.load(os.path.join("game/assets/Dino", "DinoRun1.png")),
+        pygame.image.load(os.path.join("game/assets/Dino", "DinoRun2.png")),
     ]
     JUMPING = [
-        pygame.image.load(os.path.join("assets/Dino", "DinoJump.png")),
-        pygame.image.load(os.path.join("assets/Dino", "DinoJump.png"))
+        pygame.image.load(os.path.join("game/assets/Dino", "DinoJump.png")),
+        pygame.image.load(os.path.join("game/assets/Dino", "DinoJump.png"))
     ]
     DUCKING = [
-        pygame.image.load(os.path.join("assets/Dino", "DinoDuck1.png")),
-        pygame.image.load(os.path.join("assets/Dino", "DinoDuck2.png")),
+        pygame.image.load(os.path.join("game/assets/Dino", "DinoDuck1.png")),
+        pygame.image.load(os.path.join("game/assets/Dino", "DinoDuck2.png")),
     ]
 
-    def __init__(self, position_x, position_y):
+    def __init__(self, position_x, position_y, ml_model):
         self.action = Dino.RUNNING
         self.initial_y = position_y
         self.initial_x = position_x
@@ -24,6 +26,7 @@ class Dino:
         self.speed_y = 0
         self.steps = 0
         self.death = False
+        self.ml_model = pickle.load(open(ml_model, 'rb'))
 
     def jump(self):
         if self.action != Dino.JUMPING:
@@ -58,8 +61,31 @@ class Dino:
         
         self.steps +=1
         SCREEN.blit(self.action[self.steps % 2], self.rect)
-        pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
+        #pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
 
     def die(self):
         self.death = True
+
+    def think(self, obstacles, game_speed):
+        data = []
+        obs = sorted(obstacles, key=lambda x: x.rect.x)    
+        for obstacle in obs:
+           if obstacle.rect.x >= self.rect.x:
+                data.append([
+                    abs(self.rect.x - obstacle.rect.x),
+                    obstacle.rect.x,
+                    obstacle.rect.y,
+                    obstacle.rect.width,
+                    obstacle.rect.height,
+                    self.rect.y,
+                    game_speed
+                ])
+
+        if len(data) == 1:
+            return self.ml_model.predict(data)[0]
+        else:
+            return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed]])[0]
+            #return 0
+            #return random.randint(0, 2)
+
 

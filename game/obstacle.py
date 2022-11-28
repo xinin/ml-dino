@@ -11,7 +11,7 @@ class Obstacle:
 
     def draw(self, SCREEN):
         SCREEN.blit(self.image, self.rect)
-        pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
+        #pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
 
     def update(self, game_speed):
         self.rect.x -= game_speed
@@ -19,9 +19,9 @@ class Obstacle:
 class SmallCactus(Obstacle):
 
     TYPES = [
-        pygame.image.load(os.path.join("assets/Cactus", "SmallCactus1.png")),
-        pygame.image.load(os.path.join("assets/Cactus", "SmallCactus2.png")),
-        pygame.image.load(os.path.join("assets/Cactus", "SmallCactus3.png")),
+        pygame.image.load(os.path.join("game/assets/Cactus", "SmallCactus1.png")),
+        pygame.image.load(os.path.join("game/assets/Cactus", "SmallCactus2.png")),
+        pygame.image.load(os.path.join("game/assets/Cactus", "SmallCactus3.png")),
     ]
 
     def __init__(self, position_x, position_y):
@@ -32,9 +32,9 @@ class SmallCactus(Obstacle):
 class LargeCactus(Obstacle):
 
     TYPES = [
-        pygame.image.load(os.path.join("assets/Cactus", "LargeCactus1.png")),
-        pygame.image.load(os.path.join("assets/Cactus", "LargeCactus2.png")),
-        pygame.image.load(os.path.join("assets/Cactus", "LargeCactus3.png")),
+        pygame.image.load(os.path.join("game/assets/Cactus", "LargeCactus1.png")),
+        pygame.image.load(os.path.join("game/assets/Cactus", "LargeCactus2.png")),
+        pygame.image.load(os.path.join("game/assets/Cactus", "LargeCactus3.png")),
     ]
 
     def __init__(self, position_x, position_y):
@@ -45,8 +45,8 @@ class LargeCactus(Obstacle):
 class Bird(Obstacle):
 
     TYPES = [
-        pygame.image.load(os.path.join("assets/Bird", "Bird1.png")),
-        pygame.image.load(os.path.join("assets/Bird", "Bird2.png"))
+        pygame.image.load(os.path.join("game/assets/Bird", "Bird1.png")),
+        pygame.image.load(os.path.join("game/assets/Bird", "Bird2.png"))
     ]
 
     def __init__(self, position_x, position_y):
@@ -62,6 +62,6 @@ class Bird(Obstacle):
             SCREEN.blit(Bird.TYPES[1], self.rect)
 
         self.steps += 1
-        pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
+        #pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
 
 
