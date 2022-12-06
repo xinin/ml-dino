@@ -13,5 +13,6 @@ https://michael-fuchs-python.netlify.app/2021/02/03/nn-multi-layer-perceptron-cl
 
 TODO
 
-hacer que en cada iteracion coja los logs mejores y los use para entrenar
-mirar como meter mutaciones
+en vez de quedarse con el mejor, quedarse con los 4 mejores y hacer un mergeo de los csvs para evitar que se quede moñeco
+mirar como meter mutaciones mejores
+guardar el score maximo para que si en la siguiente iteracion son subnormales seguir con la antigua

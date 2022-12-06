@@ -12,7 +12,7 @@ class Game:
 
     def init(iteration, timestamp, dino_number, ml_model):
         #create data folder
-        folder = 'game/data/'+str(int(timestamp))
+        folder = 'data/'+str(int(timestamp))
         os.mkdir(folder)
 
         pygame.init()
@@ -30,7 +30,7 @@ class Game:
         steps = 0
 
         for i in range(max_dinos):
-            dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, ml_model))  
+            dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, ml_model+'/model_'+str(i)+'.sav'))  
 
         dead_dinos = 0
 
