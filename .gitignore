@@ -1,7 +1,7 @@
 *.bat
-game/data/**
 data/**
-game/__pycache__/**
 game/__pycache__
-machine_learning/models/**
 machine_learning/__pycache__
+models/**
+**/.venv
+game/__pycache__/

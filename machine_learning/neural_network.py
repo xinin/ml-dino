@@ -108,7 +108,7 @@ def create_default_df():
     
 def train(iteration, timestamp, dino_number, csv_file):
 
-    folder = 'machine_learning/models/'+str(int(timestamp))
+    folder = 'models/'+str(int(timestamp))
     os.mkdir(folder)
 
     df = None

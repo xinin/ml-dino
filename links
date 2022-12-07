@@ -13,6 +13,13 @@ https://michael-fuchs-python.netlify.app/2021/02/03/nn-multi-layer-perceptron-cl
 
 TODO
 
-en vez de quedarse con el mejor, quedarse con los 4 mejores y hacer un mergeo de los csvs para evitar que se quede moñeco
 mirar como meter mutaciones mejores
 guardar el score maximo para que si en la siguiente iteracion son subnormales seguir con la antigua
+
+
+
+https://datascience.stackexchange.com/questions/36049/how-to-adjust-the-hyperparameters-of-mlp-classifier-to-get-more-perfect-performa
+
+https://heartbeat.comet.ml/train-neural-networks-using-a-genetic-algorithm-in-python-with-pygad-862905048429
+
+

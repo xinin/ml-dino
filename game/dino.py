@@ -27,7 +27,6 @@ class Dino:
         self.steps = 0
         self.death = False
         self.ml_model = pickle.load(open(ml_model, 'rb'))
-        print("ml_model", ml_model)
 
     def jump(self):
         if self.action != Dino.JUMPING:
