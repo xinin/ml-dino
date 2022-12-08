@@ -2,10 +2,12 @@ import pygame
 import csv
 from pathlib import Path
 from csv import writer
+import os
 
 class DataCollector:
 
-    header = ['distance_next', 'x_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed', 'action']
+    #header = ['distance_next', 'x_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed', 'action']
+    header = ['distance_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed', 'action']
 
     def write_data(filename, dino, obstacles, game_speed, action):
         
@@ -25,7 +27,7 @@ class DataCollector:
                         writer_obj.writerow(
                             [
                                 abs(dino.rect.x - obstacle.rect.x),
-                                obstacle.rect.x,
+                                #obstacle.rect.x,
                                 obstacle.rect.y,
                                 obstacle.rect.width,
                                 obstacle.rect.height,
@@ -39,7 +41,17 @@ class DataCollector:
                 #pygame.draw.rect(SCREEN, (255,0,0), pygame.Rect(obstacle.rect.x, obstacle.rect.y, obstacle.rect.width, obstacle.rect.height),  5, 5)
                 break
         
+    def delete_last_action(folder, index):
+        filename = folder+'/dino_'+str(index)+'.csv'
+        with open(filename, "r+") as f:
+            current_position = previous_position = f.tell()
+            while f.readline():
+                previous_position = current_position
+                current_position = f.tell()
+            f.truncate(previous_position)
 
+    def rename_file(folder, index, dino_steps):
+        os.rename(folder+'/dino_'+str(index)+'.csv', folder+'/'+str(dino_steps)+'_dino_'+str(index)+'.csv')
 
 
 

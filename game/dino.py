@@ -74,19 +74,21 @@ class Dino:
            if obstacle.rect.x >= self.rect.x:
                 data.append([
                     abs(self.rect.x - obstacle.rect.x),
-                    obstacle.rect.x,
+                    #obstacle.rect.x,
                     obstacle.rect.y,
                     obstacle.rect.width,
                     obstacle.rect.height,
                     self.rect.y,
                     game_speed,
-                    self.child_number
+                    #self.child_number
                 ])
 
         if len(data) == 1:
             return self.ml_model.predict(data)[0]
         else:
-            return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed, self.child_number]])[0]
+            return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]
+            #return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed]])[0]
+            #return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed, self.child_number]])[0]
             #return 0
             #return random.randint(0, 2)
 
