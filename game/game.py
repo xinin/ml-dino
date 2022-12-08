@@ -2,7 +2,7 @@ import pygame, random, os
 from pygame.locals import *
 #from datetime import datetime
 
-from game.constants import SCREEN_HEIGHT, SCREEN_WIDTH, WHITE, BLACK
+from game.constants import SCREEN_HEIGHT, SCREEN_WIDTH, WHITE, BLACK, MAX_SCORE_FOLDER
 
 from game.dino import Dino
 from game.obstacle import SmallCactus, LargeCactus, Bird
@@ -10,7 +10,7 @@ from game.data_colector import DataCollector
 
 class Game:
 
-    def init(iteration, timestamp, dino_number, ml_model):
+    def init(iteration, timestamp, dino_number, max_score, ml_model):
         #create data folder
         folder = 'data/'+str(int(timestamp))
         os.mkdir(folder)
@@ -30,7 +30,7 @@ class Game:
         steps = 0
 
         for i in range(max_dinos):
-            dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, ml_model+'/model_'+str(i)+'.sav'))  
+            dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, i,ml_model+'/model_'+str(i)+'.sav'))  
 
         dead_dinos = 0
 
@@ -40,8 +40,8 @@ class Game:
             array_text = [
                 'Dinos Alive: '+str(max_dinos-dead_dinos),
                 'Iteration: '+str(iteration),
-                'Max Score: TODO',
-                'Current Score:'+str(steps)
+                'Max Score: '+str(max_score),
+                'Current Score: '+str(steps)
             ]
             for i,t in enumerate(array_text):
                 text = font.render(t, True, BLACK, WHITE)
@@ -62,6 +62,9 @@ class Game:
                     for obstacle in obstacles:
                         if dino.rect.colliderect(obstacle.rect):
                             dino.die()
+                            if max_score < dino.steps:
+                                with open(MAX_SCORE_FOLDER+'score', 'w') as f:
+                                    f.write(str(dino.steps))
                             dead_dinos += 1
                             os.rename(folder+'/dino_'+str(index)+'.csv', folder+'/'+str(dino.steps)+'_dino_'+str(index)+'.csv')
 

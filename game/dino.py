@@ -18,7 +18,7 @@ class Dino:
         pygame.image.load(os.path.join("game/assets/Dino", "DinoDuck2.png")),
     ]
 
-    def __init__(self, position_x, position_y, ml_model):
+    def __init__(self, position_x, position_y, child_number, ml_model):
         self.action = Dino.RUNNING
         self.initial_y = position_y
         self.initial_x = position_x
@@ -26,6 +26,7 @@ class Dino:
         self.speed_y = 0
         self.steps = 0
         self.death = False
+        self.child_number = child_number
         self.ml_model = pickle.load(open(ml_model, 'rb'))
 
     def jump(self):
@@ -78,13 +79,14 @@ class Dino:
                     obstacle.rect.width,
                     obstacle.rect.height,
                     self.rect.y,
-                    game_speed
+                    game_speed,
+                    self.child_number
                 ])
 
         if len(data) == 1:
             return self.ml_model.predict(data)[0]
         else:
-            return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed]])[0]
+            return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed, self.child_number]])[0]
             #return 0
             #return random.randint(0, 2)
 
