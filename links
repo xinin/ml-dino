@@ -10,15 +10,18 @@ https://analyticsindiamag.com/a-beginners-guide-to-scikit-learns-mlpclassifier/
 
 https://michael-fuchs-python.netlify.app/2021/02/03/nn-multi-layer-perceptron-classifier-mlpclassifier/
 
-TODO
-
-mirar como meter mutaciones mejores
-hacer el fichero de constantes global para que pueda usarse en todos los sitios ocn los main folder
-
 https://datascience.stackexchange.com/questions/36049/how-to-adjust-the-hyperparameters-of-mlp-classifier-to-get-more-perfect-performa
 
 https://heartbeat.comet.ml/train-neural-networks-using-a-genetic-algorithm-in-python-with-pygad-862905048429
 
 https://www.dewep.net/realisations/en/t-rex-machine-learning-neural-network-genetic-algorithm
+
+TODO
+
+mirar como meter mutaciones mejores
+hacer el fichero de constantes global para que pueda usarse en todos los sitios ocn los main folder
+
+factor de reporducccion en base a puntos, el primer mas hijo que el ultimo
+
 
 

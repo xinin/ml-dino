@@ -1,8 +1,7 @@
 import pygame, random, os
 from pygame.locals import *
-#from datetime import datetime
 
-from game.constants import SCREEN_HEIGHT, SCREEN_WIDTH, WHITE, BLACK, MAX_SCORE_FOLDER
+from game.constants import SCREEN_HEIGHT, SCREEN_WIDTH, WHITE, BLACK, MAX_SCORE_FOLDER, HIGH_BIRD_HEIGHT, LOW_BIRD_HEIGHT
 
 from game.dino import Dino
 from game.obstacle import SmallCactus, LargeCactus, Bird
@@ -47,6 +46,7 @@ class Game:
                 'Max Score: '+str(max_score),
                 'Current Score: '+str(steps),
                 'Dinos Alive: '+str(max_dinos-dead_dinos),
+                'Game Speed: '+str(game_speed),
                 'Dinos Running: '+str(running_dinos),
                 'Dinos Jumping: '+str(jumping_dinos),
                 'Dinos Ducking: '+str(ducking_dinos),
@@ -101,13 +101,9 @@ class Game:
                                 with open(MAX_SCORE_FOLDER+'score', 'w') as f:
                                     f.write(str(dino.steps))
                             dead_dinos += 1
-                            #No crea que sea buena idea dado que en un salto hay varias acciones anteriores que deberia hacer, no solo la anterior
-                            DataCollector.delete_last_action(folder,index)
                             DataCollector.rename_file(folder, index, dino.steps)
-                            #os.rename(folder+'/dino_'+str(index)+'.csv', folder+'/'+str(dino.steps)+'_dino_'+str(index)+'.csv')
 
                 if not dino.death:
-                    #if dino.action != Dino.JUMPING:
                     action = dino.think(obstacles, game_speed)
                     if action == 0:
                         dino.running()
@@ -121,14 +117,13 @@ class Game:
                     DataCollector.write_data(folder+'/dino_'+str(index)+'.csv', dino, obstacles, game_speed, action)
                     dino.draw(screen)
 
-            #if steps % 15 == 0 or steps % 40 == 0:
             if steps_next_obstacle == 0:
-                steps_next_obstacle = np.random.randint(20,40)
+                steps_next_obstacle = np.random.randint(40,50)
                 if len(obstacles) <= 2:
-                    if random.randint(0, 5) >= 3:
+                    if random.randint(0, 10) >= 6:
                         obstacles.append(LargeCactus(SCREEN_WIDTH, SCREEN_HEIGHT*0.5))
-                    elif random.randint(0, 10)>7:
-                        h = SCREEN_HEIGHT*0.50 if random.randint(0,1) else SCREEN_HEIGHT*0.40
+                    elif random.randint(0, 10)>6:
+                        h = LOW_BIRD_HEIGHT if random.randint(0,3)<1 else HIGH_BIRD_HEIGHT
                         obstacles.append(Bird(SCREEN_WIDTH, h)) 
                     else:
                         obstacles.append(SmallCactus(SCREEN_WIDTH, SCREEN_HEIGHT*0.5))
@@ -142,4 +137,5 @@ class Game:
             steps = steps + 1
             steps_next_obstacle -=1
             #aumentar la velocidad segun los puntos
-            #game_speed = game_speed +0.05
+            if steps % 100 == 0:
+                game_speed = game_speed +0.5

@@ -2,6 +2,7 @@ import pygame
 import os
 import pickle
 import random
+from game.constants import DEBUG
 
 class Dino:
 
@@ -62,7 +63,8 @@ class Dino:
         
         self.steps +=1
         SCREEN.blit(self.action[self.steps % 2], self.rect)
-        #pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
+        if DEBUG:
+            pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
 
     def die(self):
         self.death = True
@@ -74,22 +76,15 @@ class Dino:
            if obstacle.rect.x >= self.rect.x:
                 data.append([
                     abs(self.rect.x - obstacle.rect.x),
-                    #obstacle.rect.x,
                     obstacle.rect.y,
                     obstacle.rect.width,
                     obstacle.rect.height,
                     self.rect.y,
                     game_speed,
-                    #self.child_number
                 ])
 
         if len(data) == 1:
             return self.ml_model.predict(data)[0]
         else:
             return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]
-            #return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed]])[0]
-            #return self.ml_model.predict([[self.rect.x,0,0,0,0,self.rect.y, game_speed, self.child_number]])[0]
-            #return 0
-            #return random.randint(0, 2)
-
 
