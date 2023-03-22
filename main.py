@@ -4,9 +4,10 @@ from machine_learning.neural_network import generate_brains
 import os
 import shutil
 
-DINO_NUMBER = 300
-REPRODUCTION_LEVEL = 10
+DINO_NUMBER = 400
+REPRODUCTION_LEVEL = 20
 ITERATIONS = 300
+DYNAMIC_MUTATION = True
 
 DATA_FOLDER = 'data/'
 MODELS_FOLDER = 'models/'
@@ -30,7 +31,7 @@ for i in range(ITERATIONS):
     print("Iteration: "+str(i))
     dt = datetime.now()
     ts = datetime.timestamp(dt)
-    ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos)
+    ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos, DYNAMIC_MUTATION)
     with open(MAX_SCORE_FOLDER+'score', 'r') as f:
         max_score=f.read()
     Game.init(i, ts, DINO_NUMBER, int(max_score), ml_model_version)

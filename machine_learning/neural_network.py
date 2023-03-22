@@ -39,13 +39,21 @@ def generate_first_generation(folder, dino_number):
         pickle.dump(mlp_clf_, open(model_name, 'wb'))
 
 
-def mutate(child):
+def mutate(child, iteration, dynamic_mutation):
 
     # A higher mutation_rate leads to longer stagnation at the beginning, but leads to faster game progressing in the long run
     # A lower mutation_rate leads to faster initial progress, but to slower longterm progress.
     # Any mutation_rate higher then 0.09 leads to longterm stagnation.
-    mutation_rate = 0.05
-    mutation_magnitude = 0.1
+    
+
+    if dynamic_mutation:
+         mutation_rate= max(0.5/iteration,0.05) 
+         mutation_magnitude= max(1/iteration, 0.1)
+         print("mutation_rate", mutation_rate)
+         print("mutation_magnitude", mutation_magnitude)
+    else:
+        mutation_rate = 0.05
+        mutation_magnitude = 0.1
 
     for i in range(len(child.intercepts_)):
         for j in range((len(child.intercepts_[i]))):
@@ -59,7 +67,7 @@ def mutate(child):
 
     return child
 
-def reproduce(parent_model, mother_model):
+def reproduce(parent_model, mother_model, iteration, dynamic_mutation):
 
     heritage_percentage = np.random.randint(11)*0.2
 
@@ -73,12 +81,18 @@ def reproduce(parent_model, mother_model):
             if np.random.random() < heritage_percentage:
                 mother_model.coefs_[i][j] = mother_model.coefs_[i][j]
 
-    if np.random.randint(0,10) >= 7:
-        return mutate(parent_model)
+    if dynamic_mutation:
+        if np.random.randint(0,100) <= max(100/iteration, 10):
+            return mutate(parent_model, iteration, dynamic_mutation)
+        else:
+            return parent_model
     else:
-        return parent_model
+        if np.random.randint(0,100) <= 30:
+            return mutate(parent_model, iteration, dynamic_mutation)
+        else:
+            return parent_model
 
-def generate_brains(iteration, timestamp, dino_child_number, best_dinos):
+def generate_brains(iteration, timestamp, dino_child_number, best_dinos, dynamic_mutation):
     folder = 'models/'+str(int(timestamp))
     os.mkdir(folder)
 
@@ -100,7 +114,7 @@ def generate_brains(iteration, timestamp, dino_child_number, best_dinos):
             #X_scaled = scaler.transform(x)
             #parent_model.fit(X_scaled, y)
 
-            child = reproduce(parent_model, mother_model)
+            child = reproduce(parent_model, mother_model,iteration,dynamic_mutation)
 
             model_name = folder + '/model_'+str(i)+'.sav'
             pickle.dump(child, open(model_name, 'wb'))
