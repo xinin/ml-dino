@@ -13,7 +13,7 @@ class Game:
 
     def init(iteration, timestamp, dino_number, max_score, ml_model):
         #create data folder
-        folder = 'data/'+str(int(timestamp))
+        folder = 'data/'+str(int(timestamp))+'/'+str(iteration)
         os.mkdir(folder)
 
         pygame.init()

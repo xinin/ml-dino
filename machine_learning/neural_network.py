@@ -93,7 +93,7 @@ def reproduce(parent_model, mother_model, iteration, dynamic_mutation):
             return parent_model
 
 def generate_brains(iteration, timestamp, dino_child_number, best_dinos, dynamic_mutation):
-    folder = 'models/'+str(int(timestamp))
+    folder = 'models/'+str(int(timestamp))+'/'+str(iteration)
     os.mkdir(folder)
 
     if iteration == 0:
