@@ -47,8 +47,8 @@ def mutate(child, iteration, dynamic_mutation):
     
 
     if dynamic_mutation:
-         mutation_rate= max(0.5/iteration,0.05) 
-         mutation_magnitude= max(1/iteration, 0.1)
+         mutation_rate= max(0.8/iteration,0.01) 
+         mutation_magnitude= max(1/iteration, 0.05)
          print("mutation_rate", mutation_rate)
          print("mutation_magnitude", mutation_magnitude)
     else:
@@ -87,7 +87,7 @@ def reproduce(parent_model, mother_model, iteration, dynamic_mutation):
         else:
             return parent_model
     else:
-        if np.random.randint(0,100) <= 30:
+        if np.random.randint(0,100) <= 50:
             return mutate(parent_model, iteration, dynamic_mutation)
         else:
             return parent_model

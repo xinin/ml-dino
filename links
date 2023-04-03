@@ -18,10 +18,11 @@ https://www.dewep.net/realisations/en/t-rex-machine-learning-neural-network-gene
 
 TODO
 
-mirar como meter mutaciones mejores
-hacer el fichero de constantes global para que pueda usarse en todos los sitios ocn los main folder
-
 factor de reporducccion en base a puntos, el primer mas hijo que el ultimo
+
+reproducciones, meter en la siguiente generación, tambien a los padres, asi en caso de que los hijos se comporten peor, los mejores seguiran siiendo los padres
+
+en vez de random, asegurarse de que cada uno se reproduce al menos una vez
 
 
 

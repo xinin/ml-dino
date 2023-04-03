@@ -34,6 +34,7 @@ class Game:
         running_dinos = 0
         jumping_dinos = 0
         ducking_dinos = 0
+        obstacle_count = 0
 
         for i in range(max_dinos):
             dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, i,ml_model+'/model_'+str(i)+'.sav'))  
@@ -120,11 +121,15 @@ class Game:
             if steps_next_obstacle == 0:
                 steps_next_obstacle = np.random.randint(40,50)
                 if len(obstacles) <= 2:
-                    if random.randint(0, 10) >= 6:
+                    obstacle_count += 1
+                    if obstacle_count%5 == 0:
+                        #h = LOW_BIRD_HEIGHT if random.randint(0,3)<1 else HIGH_BIRD_HEIGHT
+                        obstacles.append(Bird(SCREEN_WIDTH, HIGH_BIRD_HEIGHT))
+                    elif random.randint(0, 10) >= 6:
                         obstacles.append(LargeCactus(SCREEN_WIDTH, SCREEN_HEIGHT*0.5))
                     elif random.randint(0, 10)>6:
-                        h = LOW_BIRD_HEIGHT if random.randint(0,3)<1 else HIGH_BIRD_HEIGHT
-                        obstacles.append(Bird(SCREEN_WIDTH, h)) 
+                        #h = LOW_BIRD_HEIGHT if random.randint(0,3)<1 else HIGH_BIRD_HEIGHT
+                        obstacles.append(Bird(SCREEN_WIDTH, LOW_BIRD_HEIGHT)) 
                     else:
                         obstacles.append(SmallCactus(SCREEN_WIDTH, SCREEN_HEIGHT*0.5))
             
