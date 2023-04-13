@@ -6,8 +6,10 @@ import shutil
 
 DINO_NUMBER = 400
 REPRODUCTION_LEVEL = 20
-ITERATIONS = 21
+ITERATIONS = 100
 DYNAMIC_MUTATION = True
+MUTATION_BASED_ON_SCORE = True
+PARENTS_IN_GENERATION = True
 
 DATA_FOLDER = 'data/'
 MODELS_FOLDER = 'models/'
@@ -34,9 +36,10 @@ os.mkdir(MODELS_FOLDER+str(int(ts)))
 
 for i in range(ITERATIONS):
     print("Iteration: "+str(i))
-    ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos, DYNAMIC_MUTATION)
     with open(MAX_SCORE_FOLDER+'score', 'r') as f:
         max_score=f.read()
+    
+    ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos, DYNAMIC_MUTATION, PARENTS_IN_GENERATION, MUTATION_BASED_ON_SCORE, max_score)
     Game.init(i, ts, DINO_NUMBER, int(max_score), ml_model_version)
     
     scores = os.listdir(DATA_FOLDER+str(int(ts))+'/'+ str(i))
