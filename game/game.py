@@ -6,15 +6,19 @@ from game.constants import SCREEN_HEIGHT, SCREEN_WIDTH, WHITE, BLACK, MAX_SCORE_
 from game.dino import Dino
 from game.obstacle import SmallCactus, LargeCactus, Bird
 from game.data_colector import DataCollector
+import datetime
+
 
 import numpy as np
 
 class Game:
 
-    def init(iteration, timestamp, dino_number, max_score, ml_model):
+    def init(iteration, timestamp, dino_number, max_score, ml_model, real_death, max_time, max_iterations_death):
         #create data folder
         folder = 'data/'+str(int(timestamp))+'/'+str(iteration)
         os.mkdir(folder)
+
+        start_time = datetime.datetime.now()
 
         pygame.init()
         pygame.display.set_caption('Diego Prieto Dino ML')
@@ -40,7 +44,8 @@ class Game:
             dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, i,ml_model+'/model_'+str(i)+'.sav'))  
 
         #Run the game loop
-        while dead_dinos < max_dinos:
+        now = datetime.datetime.now()
+        while dead_dinos < max_dinos and (not real_death or (now - start_time).total_seconds() < max_time):
             screen.fill(WHITE)
             array_text = [
                 'Iteration: '+str(iteration),
@@ -68,28 +73,6 @@ class Game:
             for obstacle in obstacles:
                 if obstacle.rect.x<0:
                     obstacles.remove(obstacle)
-
-
-            #for obstacle in obstacles:
-            #    if obstacle.rect.x >= dino.rect.x:
-            #        array_text =[
-            #            'distance_next: '+str(abs(dino.rect.x - obstacle.rect.x)),
-            #            #'x_next: '+str(obstacle.rect.x),
-            #            'y_next: '+str(obstacle.rect.y),
-            #            'width_next: '+str(obstacle.rect.width),
-            #            'height_next: '+str(obstacle.rect.height),
-            #            'y_dino: '+str(dino.rect.y),
-            #            'game_speed: '+str(game_speed)
-            #        ]
-            #
-            #        for i,t in enumerate(array_text):
-            #            text = font.render(t, True, BLACK, WHITE)
-            #            textRect = text.get_rect()
-            #            textRect.y += 35*i
-            #            textRect.x = 600
-            #            screen.blit(text, textRect)
-            #pygame.draw.rect(screen, (255,0,0), pygame.Rect(obstacle.rect.x, obstacle.rect.y, obstacle.rect.width, obstacle.rect.height),  5, 5)
-
                 break
 
             for index, dino in enumerate(dinos):
@@ -97,12 +80,15 @@ class Game:
                 if not dino.death:
                     for obstacle in obstacles:
                         if dino.rect.colliderect(obstacle.rect):
-                            dino.die()
-                            if max_score < dino.steps:
-                                with open(MAX_SCORE_FOLDER+'score', 'w') as f:
-                                    f.write(str(dino.steps))
-                            dead_dinos += 1
-                            DataCollector.rename_file(folder, index, dino.steps)
+                            if not real_death and iteration < max_iterations_death:
+                                dino.fail()
+                            else:
+                                dino.die()
+                                if max_score < dino.get_score():
+                                    with open(MAX_SCORE_FOLDER+'score', 'w') as f:
+                                        f.write(str(dino.get_score()))
+                                dead_dinos += 1
+                                DataCollector.rename_file(folder, index, dino.get_score())
 
                 if not dino.death:
                     action = dino.think(obstacles, game_speed)
@@ -115,7 +101,7 @@ class Game:
                     elif action == 2:
                         dino.duck()
                         ducking_dinos +=1
-                    DataCollector.write_data(folder+'/dino_'+str(index)+'.csv', dino, obstacles, game_speed, action)
+                    DataCollector.write_data(folder+'/dino_'+str(index)+'.csv', dino, obstacles, game_speed, action, dino.get_score())
                     dino.draw(screen)
 
             if steps_next_obstacle == 0:
@@ -144,3 +130,17 @@ class Game:
             #aumentar la velocidad segun los puntos
             if steps % 100 == 0:
                 game_speed = game_speed +0.5
+
+            now = datetime.datetime.now()
+
+
+        print("Tiempo acabado", (now - start_time).total_seconds())
+        for index, dino in enumerate(dinos):
+            if not dino.death:
+                dino.die()
+                if max_score < dino.get_score():
+                    with open(MAX_SCORE_FOLDER+'score', 'w') as f:
+                        f.write(str(dino.get_score()))
+                    max_score = dino.get_score()
+                dead_dinos += 1
+                DataCollector.rename_file(folder, index, dino.get_score())

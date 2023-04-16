@@ -1,12 +1,12 @@
 from pathlib import Path
-from csv import writer
+from csv import writer, reader
 import os
 
 class DataCollector:
 
-    header = ['distance_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed', 'action']
+    header = ['distance_next', 'y_next', 'width_next', 'height_next', 'y_dino', 'game_speed', 'action', 'score', 'last_failed']
 
-    def write_data(filename, dino, obstacles, game_speed, action):
+    def write_data(filename, dino, obstacles, game_speed, action, score):
         
         obs = sorted(obstacles, key=lambda x: x.rect.x)    
      
@@ -29,7 +29,9 @@ class DataCollector:
                                 obstacle.rect.height,
                                 dino.rect.y,
                                 game_speed,
-                                action
+                                action,
+                                score,
+                                int(dino.last_failed)
                             ]
                         )
                         file.close()
@@ -48,6 +50,30 @@ class DataCollector:
     def rename_file(folder, index, dino_steps):
         os.rename(folder+'/dino_'+str(index)+'.csv', folder+'/'+str(dino_steps)+'_dino_'+str(index)+'.csv')
 
+    def delete_failures(score_file, training_file):
 
-
+        rows_to_skip = 2
+        
+        folder = training_file[:training_file.rfind('/')]
+        if not Path(folder).is_dir():
+            os.mkdir(folder)
+        
+        with open(score_file, 'r') as input_file, open(training_file, 'w') as output_file:
+            csv_reader = reader(input_file)
+            csv_writer = writer(output_file)
+            #rows_to_skip = 0
+            previous_rows = []
+            for row in csv_reader:
+                #if rows_to_skip > 0:
+                #    # Skip this row and decrement the rows_to_skip counter
+                #    rows_to_skip -= 1
+                #    continue
+                if row[-1] == '1':
+                    # Skip this row and the three previous rows
+                    #rows_to_skip = 4
+                    previous_rows.clear()
+                    continue
+                previous_rows.append(row)
+                if len(previous_rows) > rows_to_skip:
+                    csv_writer.writerow(previous_rows.pop(0))
         

@@ -1,5 +1,6 @@
 *.bat
 data/**
+training_data/**
 game/__pycache__
 machine_learning/__pycache__
 models/**

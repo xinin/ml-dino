@@ -26,6 +26,8 @@ class Dino:
         self.rect = self.action[0].get_rect(bottomleft=(self.initial_x, self.initial_y))
         self.speed_y = 0
         self.steps = 0
+        self.fails = 0
+        self.last_failed = False
         self.death = False
         self.child_number = child_number
         self.ml_model = pickle.load(open(ml_model, 'rb'))
@@ -65,9 +67,18 @@ class Dino:
         SCREEN.blit(self.action[self.steps % 2], self.rect)
         if DEBUG:
             pygame.draw.rect(SCREEN, (0,0,0), pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height),  2, 3)
+        self.last_failed = False
+
 
     def die(self):
         self.death = True
+
+    def fail(self):
+        self.fails += 1
+        self.last_failed = True
+
+    def get_score(self):
+        return self.steps - (self.fails *100)
 
     def think(self, obstacles, game_speed):
         data = []
