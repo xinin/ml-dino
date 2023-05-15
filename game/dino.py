@@ -21,7 +21,7 @@ class Dino:
         pygame.image.load(os.path.join("game/assets/Dino", "DinoDuck2.png")),
     ]
 
-    def __init__(self, position_x, position_y, child_number, ml_model):
+    def __init__(self, position_x, position_y, child_number, ml_model, IMPROVISED_RATIO):
         self.action = Dino.RUNNING
         self.initial_y = position_y
         self.initial_x = position_x
@@ -29,9 +29,12 @@ class Dino:
         self.speed_y = 0
         self.steps = 0
         self.fails = 0
+        self.useless_actions = 0
+        self.usefull_actions = 0
         self.last_failed = False
         self.death = False
         self.child_number = child_number
+        self.IMPROVISED_RATIO = IMPROVISED_RATIO
         self.ml_model = pickle.load(open(ml_model, 'rb'))
 
     def jump(self):
@@ -79,8 +82,14 @@ class Dino:
         self.fails += 1
         self.last_failed = True
 
+    def do_useless_action(self):
+        self.useless_actions += 1
+    
+    def do_usefull_action(self):
+        self.usefull_actions +=1
+
     def get_score(self):
-        return self.steps - (self.fails *100)
+        return self.steps - (self.fails *100) - (self.useless_actions * 5) #+ (self.usefull_actions * 5)
 
     def think(self, obstacles, game_speed):
         data = []
@@ -95,8 +104,7 @@ class Dino:
                     self.rect.y,
                     game_speed,
                 ])
-
-        
+                break
 
         if len(data) == 1:
 
@@ -104,8 +112,25 @@ class Dino:
             #scaler = sc.fit(data)
             #X_scaled = scaler.transform(data)
 
-            return np.argmax(self.ml_model.predict_proba(data)[0])
-            #return self.ml_model.predict(data)[0]
+            pred = np.argmax(self.ml_model.predict_proba(data)[0])
+            
+            if (self.IMPROVISED_RATIO > 0):
+                improvised_chance = random.random()
+                if improvised_chance < self.IMPROVISED_RATIO:
+
+                    if pred == 1:
+                        return 2
+                    else:
+                        return pred
+                        #cogemos el segundo mas probable 
+                        #pred = self.ml_model.predict_proba(data)[0]
+                        #max = np.argmax(pred)
+                        #pred[max] = -np.inf
+                        #return np.argmin(np.argmax(pred))
+                else:
+                    return np.argmax(self.ml_model.predict_proba(data)[0])
+            else:
+                return pred
         else:
-            return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]
+            return np.argmax(self.ml_model.predict_proba([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
             #return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]

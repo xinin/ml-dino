@@ -11,11 +11,13 @@ ITERATIONS = 100
 DYNAMIC_MUTATION = True
 MUTATION_BASED_ON_SCORE = True
 PARENTS_IN_GENERATION = True
+USE_PARENT_KNOWLEDGE = False
 BEST_ALL_TIME_IN_GENERATION = True
-USE_PARENT_KNOWLEDGE = True
 REAL_DEATH = True
 REAL_DEATH_ITERATIONS = 5
 MAX_TIME = 40000
+REWARD_FUNC_TYPE = 2 #1 adds up if they survive for the time. 2, subtract if they do actions that do not make sense.
+IMPROVISED_RATIO = 0.3 # value between 0 and 1
 
 DATA_FOLDER = 'data/'
 MODELS_FOLDER = 'models/'
@@ -51,7 +53,7 @@ for i in range(ITERATIONS):
         max_score=f.read()
     
     ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos_all_time, DYNAMIC_MUTATION, PARENTS_IN_GENERATION, MUTATION_BASED_ON_SCORE, max_score, USE_PARENT_KNOWLEDGE)
-    Game.init(i, ts, DINO_NUMBER, int(max_score), ml_model_version, REAL_DEATH, MAX_TIME, REAL_DEATH_ITERATIONS)
+    Game.init(i, ts, DINO_NUMBER, int(max_score), ml_model_version, REAL_DEATH, MAX_TIME, REAL_DEATH_ITERATIONS, REWARD_FUNC_TYPE, IMPROVISED_RATIO)
     
     scores = os.listdir(DATA_FOLDER+str(int(ts))+'/'+ str(i))
     scores = sorted(scores, key=lambda x: int(x.split('_')[0]), reverse=False)

@@ -13,7 +13,7 @@ import numpy as np
 
 class Game:
 
-    def init(iteration, timestamp, dino_number, max_score, ml_model, real_death, max_time, max_iterations_death):
+    def init(iteration, timestamp, dino_number, max_score, ml_model, real_death, max_time, max_iterations_death, REWARD_FUNC_TYPE, IMPROVISED_RATIO):
         #create data folder
         folder = 'data/'+str(int(timestamp))+'/'+str(iteration)
         os.mkdir(folder)
@@ -39,13 +39,15 @@ class Game:
         jumping_dinos = 0
         ducking_dinos = 0
         obstacle_count = 0
+        INTERSECTION = False
 
         for i in range(max_dinos):
-            dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, i,ml_model+'/model_'+str(i)+'.sav'))  
+            dinos.append(Dino(SCREEN_WIDTH*0.20, SCREEN_HEIGHT*0.5, i,ml_model+'/model_'+str(i)+'.sav', IMPROVISED_RATIO) ) 
 
         #Run the game loop
         now = datetime.datetime.now()
         while dead_dinos < max_dinos and (not real_death or (now - start_time).total_seconds() < max_time):
+            INTERSECTION = False
             screen.fill(WHITE)
             array_text = [
                 'Iteration: '+str(iteration),
@@ -76,7 +78,6 @@ class Game:
                 break
 
             for index, dino in enumerate(dinos):
-
                 if not dino.death:
                     for obstacle in obstacles:
                         if dino.rect.colliderect(obstacle.rect):
@@ -89,18 +90,32 @@ class Game:
                                         f.write(str(dino.get_score()))
                                 dead_dinos += 1
                                 DataCollector.rename_file(folder, index, dino.get_score())
+                        if REWARD_FUNC_TYPE == 2:
+                            if dino.rect.x + dino.rect.width > obstacle.rect.x and dino.rect.x < obstacle.rect.x+ obstacle.rect.width:
+                               INTERSECTION = True
 
                 if not dino.death:
                     action = dino.think(obstacles, game_speed)
                     if action == 0:
                         dino.running()
                         running_dinos +=1
+                        #if REWARD_FUNC_TYPE:
+                        #    dino.do_usefull_action()
                     elif action == 1:
                         dino.jump()
                         jumping_dinos +=1
+                        if REWARD_FUNC_TYPE == 2 and INTERSECTION:
+                            dino.do_useless_action()
+                        else:
+                            dino.do_usefull_action()
                     elif action == 2:
                         dino.duck()
                         ducking_dinos +=1
+                        if REWARD_FUNC_TYPE == 2 and INTERSECTION:
+                            dino.do_useless_action()
+                        else:
+                            dino.do_usefull_action()
+
                     DataCollector.write_data(folder+'/dino_'+str(index)+'.csv', dino, obstacles, game_speed, action, dino.get_score())
                     dino.draw(screen)
 
