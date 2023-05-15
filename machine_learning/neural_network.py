@@ -31,7 +31,7 @@ def generate_first_generation(folder, dino_number):
     sc=StandardScaler()
     scaler = sc.fit(x)
     X_scaled = scaler.transform(x)
-    mlp_clf = MLPClassifier(hidden_layer_sizes=(7,3), max_iter = 1000, solver = 'lbfgs')
+    mlp_clf = MLPClassifier(hidden_layer_sizes=(7,6,5,4,3), max_iter = 1000, solver = 'lbfgs', activation='relu')
    
     for i in range(dino_number):
         mlp_clf_ = clone(mlp_clf)
@@ -172,7 +172,6 @@ def generate_brains(iteration, timestamp, dino_child_number, best_dinos, dynamic
                 model_name = folder + '/model_'+str(i)+'.sav'
                 pickle.dump(child, open(model_name, 'wb'))
                 
-
         else:
             #parent = len(best_dinos)-1
             for i in range(dino_child_number):

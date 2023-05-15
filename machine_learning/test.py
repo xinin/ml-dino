@@ -1,57 +1,35 @@
-import numpy
-import pygad
-import pygad.nn
-import pygad.gann
+import numpy as np
+from sklearn.neural_network import MLPClassifier
 
-def fitness_func(solution, sol_idx):
-    global GANN_instance, data_inputs, data_outputs
+# Paso 1: Definir los datos de entrada y salida
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1], [0.5, 0.5], [0.25, 0.75], [0.75, 0.25], [0.8, 0.8]])
+y = np.array([0, 1, 2, 0, 1, 2, 1, 0])
 
-    predictions = pygad.nn.predict(last_layer=GANN_instance.population_networks[sol_idx],
-                                   data_inputs=data_inputs)
-    correct_predictions = numpy.where(predictions == data_outputs)[0].size
-    solution_fitness = (correct_predictions/data_outputs.size)*100
+# Paso 2: Definir la arquitectura de la red neuronal
+clf = MLPClassifier(hidden_layer_sizes=(7,), activation='relu', solver='adam', 
+                    alpha=0.0001, batch_size='auto', learning_rate='constant', 
+                    learning_rate_init=0.001, power_t=0.5, max_iter=200, 
+                    shuffle=True, random_state=None, tol=0.0001, verbose=False, 
+                    warm_start=False, momentum=0.9, nesterovs_momentum=True, 
+                    early_stopping=False, validation_fraction=0.1, beta_1=0.9, 
+                    beta_2=0.999, epsilon=1e-08, n_iter_no_change=10, max_fun=15000)
 
-    return solution_fitness
+# Paso 3: Entrenar el modelo
+clf.fit(X, y)
 
-def callback_generation(ga_instance):
-    global GANN_instance
+# Paso 4: Predecir la salida para nuevos datos
+X_new = np.array([[0.4, 0.4], [0.6, 0.6], [0.9, 0.1]])
+y_pred = clf.predict(X_new)
 
-    population_matrices = pygad.gann.population_as_matrices(population_networks=GANN_instance.population_networks, 
-                                                            population_vectors=ga_instance.population)
+# Paso 5: Obtener las probabilidades de clase para nuevos datos
+y_proba = clf.predict_proba(X_new)
 
-    GANN_instance.update_population_trained_weights(population_trained_weights=population_matrices)
-
-    print("Generation = {generation}".format(generation=ga_instance.generations_completed))
-    print("Accuracy   = {fitness}".format(fitness=ga_instance.best_solution()[1]))
-
-data_inputs = numpy.array([[1, 1],
-                           [1, 0],
-                           [0, 1],
-                           [0, 0]])
-
-data_outputs = numpy.array([0, 
-                            1, 
-                            1, 
-                            0])
-
-GANN_instance = pygad.gann.GANN(num_solutions=5,
-                                num_neurons_input=2,
-                                num_neurons_hidden_layers=[2],
-                                num_neurons_output=2,
-                                hidden_activations=["relu"],
-                                output_activation="softmax")
-
-population_vectors = pygad.gann.population_as_vectors(population_networks=GANN_instance.population_networks)​
-ga_instance = pygad.GA(num_generations=50, 
-                       num_parents_mating=3, 
-                       initial_population=population_vectors.copy(),
-                       fitness_func=fitness_func,
-                       mutation_percent_genes=5,
-                       callback_generation=callback_generation)
-
-ga_instance.run()
-ga_instance.plot_result()
-solution, solution_fitness, solution_idx = ga_instance.best_solution()
-print(solution)
-print(solution_fitness)
-print(solution_idx)
+# Paso 6: Imprimir los resultados
+print("Datos de entrada:")
+print(X_new)
+print("Salida predecida:")
+print(y_pred)
+print("Probabilidades de clase:")
+print(y_proba)
+print(y_proba[0])
+print(np.argmax(y_proba[0]))

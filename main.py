@@ -5,12 +5,13 @@ from game.data_colector import DataCollector
 import os
 import shutil
 
-DINO_NUMBER = 600
-REPRODUCTION_LEVEL = 10
-ITERATIONS = 21
+DINO_NUMBER = 400
+REPRODUCTION_LEVEL = 50
+ITERATIONS = 100
 DYNAMIC_MUTATION = True
 MUTATION_BASED_ON_SCORE = True
 PARENTS_IN_GENERATION = True
+BEST_ALL_TIME_IN_GENERATION = True
 USE_PARENT_KNOWLEDGE = True
 REAL_DEATH = True
 REAL_DEATH_ITERATIONS = 5
@@ -33,6 +34,7 @@ max_score = 0
 with open(MAX_SCORE_FOLDER+'score', 'w') as f:
     f.write(str(max_score))
 
+best_dinos_all_time = []
 best_dinos = []
 
 dt = datetime.now()
@@ -43,10 +45,12 @@ os.mkdir(MODELS_FOLDER+str(int(ts)))
 
 for i in range(ITERATIONS):
     print("Iteration: "+str(i))
+    print("BEST")
+    print(best_dinos_all_time)
     with open(MAX_SCORE_FOLDER+'score', 'r') as f:
         max_score=f.read()
     
-    ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos, DYNAMIC_MUTATION, PARENTS_IN_GENERATION, MUTATION_BASED_ON_SCORE, max_score, USE_PARENT_KNOWLEDGE)
+    ml_model_version = generate_brains(i,ts,DINO_NUMBER, best_dinos_all_time, DYNAMIC_MUTATION, PARENTS_IN_GENERATION, MUTATION_BASED_ON_SCORE, max_score, USE_PARENT_KNOWLEDGE)
     Game.init(i, ts, DINO_NUMBER, int(max_score), ml_model_version, REAL_DEATH, MAX_TIME, REAL_DEATH_ITERATIONS)
     
     scores = os.listdir(DATA_FOLDER+str(int(ts))+'/'+ str(i))
@@ -55,12 +59,11 @@ for i in range(ITERATIONS):
     best_scores = scores[-REPRODUCTION_LEVEL:]
     best_scores.reverse()
 
-    print(best_scores)
-
     best_dinos = []
     for x in best_scores:
         
         score = {
+                 'score_number': int(x.split('_')[0]),
                  'score': DATA_FOLDER + str(int(ts)) + '/' + str(i) + '/' + x,
                  'training_data': DATA_TRAINING + str(int(ts)) + '/' + str(i) + '/' + x,
                  'model': MODELS_FOLDER + str(int(ts)) + '/' + str(i) + '/model_' + x.split('_')[2].split('.')[0] + '.sav'
@@ -70,3 +73,9 @@ for i in range(ITERATIONS):
     
         best_dinos.append(score)
 
+    if BEST_ALL_TIME_IN_GENERATION :
+        best_dinos_all_time += best_dinos
+        # ordenar los objetos en base al atributo score_number
+        best_dinos_all_time = sorted(best_dinos_all_time, key=lambda obj: obj['score_number'], reverse=True)[:REPRODUCTION_LEVEL]
+    else:
+        best_dinos_all_time = best_dinos

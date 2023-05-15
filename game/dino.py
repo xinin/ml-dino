@@ -3,6 +3,8 @@ import os
 import pickle
 import random
 from game.constants import DEBUG
+from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 class Dino:
 
@@ -94,8 +96,16 @@ class Dino:
                     game_speed,
                 ])
 
+        
+
         if len(data) == 1:
-            return self.ml_model.predict(data)[0]
+
+            #sc=StandardScaler()
+            #scaler = sc.fit(data)
+            #X_scaled = scaler.transform(data)
+
+            return np.argmax(self.ml_model.predict_proba(data)[0])
+            #return self.ml_model.predict(data)[0]
         else:
             return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]
-
+            #return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]
