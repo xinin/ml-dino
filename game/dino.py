@@ -112,25 +112,26 @@ class Dino:
             #scaler = sc.fit(data)
             #X_scaled = scaler.transform(data)
 
-            pred = np.argmax(self.ml_model.predict_proba(data)[0])
             
             if (self.IMPROVISED_RATIO > 0):
                 improvised_chance = random.random()
                 if improvised_chance < self.IMPROVISED_RATIO:
 
+                    #forzamos que salte
+                    pred = np.argmax(self.ml_model.predict_proba(data)[0])
                     if pred == 1:
                         return 2
                     else:
                         return pred
-                        #cogemos el segundo mas probable 
-                        #pred = self.ml_model.predict_proba(data)[0]
-                        #max = np.argmax(pred)
-                        #pred[max] = -np.inf
-                        #return np.argmin(np.argmax(pred))
+                    #cogemos el segundo mas probable 
+                    #pred = self.ml_model.predict_proba(data)[0]
+                    #max = np.argmax(pred)
+                    #pred[max] = -np.inf
+                    #return np.argmin(np.argmax(pred))
                 else:
                     return np.argmax(self.ml_model.predict_proba(data)[0])
             else:
-                return pred
+                return np.argmax(self.ml_model.predict_proba(data)[0])
         else:
             return np.argmax(self.ml_model.predict_proba([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
             #return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]
