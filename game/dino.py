@@ -6,6 +6,8 @@ from game.constants import DEBUG
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
+import tensorflow as tf
+
 class Dino:
 
     RUNNING = [
@@ -35,7 +37,8 @@ class Dino:
         self.death = False
         self.child_number = child_number
         self.IMPROVISED_RATIO = IMPROVISED_RATIO
-        self.ml_model = pickle.load(open(ml_model, 'rb'))
+        #self.ml_model = pickle.load(open(ml_model, 'rb'))
+        self.ml_model = tf.keras.models.load_model(ml_model)
 
     def jump(self):
         if self.action != Dino.JUMPING:
@@ -118,7 +121,8 @@ class Dino:
                 if improvised_chance < self.IMPROVISED_RATIO:
 
                     #forzamos que salte
-                    pred = np.argmax(self.ml_model.predict_proba(data)[0])
+                    #pred = np.argmax(self.ml_model.predict_proba(data)[0])
+                    pred = np.argmax(self.ml_model.predict(data)[0])
                     if pred == 1:
                         return 2
                     else:
@@ -129,9 +133,13 @@ class Dino:
                     #pred[max] = -np.inf
                     #return np.argmin(np.argmax(pred))
                 else:
-                    return np.argmax(self.ml_model.predict_proba(data)[0])
+                    #return np.argmax(self.ml_model.predict_proba(data)[0])
+                    return np.argmax(self.ml_model.predict(data)[0])
+
             else:
-                return np.argmax(self.ml_model.predict_proba(data)[0])
+                #return np.argmax(self.ml_model.predict_proba(data)[0])
+                return np.argmax(self.ml_model.predict(data)[0])
         else:
-            return np.argmax(self.ml_model.predict_proba([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
+            return np.argmax(self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
+            #return np.argmax(self.ml_model.predict_proba([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
             #return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]

@@ -1,12 +1,13 @@
 from game.game import Game
 from datetime import datetime
-from machine_learning.neural_network import generate_brains
+#from machine_learning.neural_network import generate_brains
+from machine_learning.neural_network_tensorflow import generate_brains
 from game.data_colector import DataCollector
 import os
 import shutil
 
-DINO_NUMBER = 400
-REPRODUCTION_LEVEL = 50
+DINO_NUMBER = 20
+REPRODUCTION_LEVEL = 5
 ITERATIONS = 100
 DYNAMIC_MUTATION = True
 MUTATION_BASED_ON_SCORE = True
