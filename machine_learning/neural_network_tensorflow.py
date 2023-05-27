@@ -49,10 +49,11 @@ def generate_first_generation(folder, dino_number):
     #mlp_clf = MLPClassifier(hidden_layer_sizes=(7,3), max_iter = 1000, solver = 'lbfgs', activation='relu')
    
     for i in range(dino_number):
+        print("Dino Model "+str(i))
         mlp_clf_ = clone_model(model)
         mlp_clf_.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
         
-        mlp_clf_.fit(X_scaled, y)
+        mlp_clf_.fit(X_scaled, y, epochs=1, batch_size=32)
 
         model_name = folder + '/model_'+str(i)+'.sav'
         mlp_clf_.save(model_name)

@@ -5,6 +5,7 @@ import random
 from game.constants import DEBUG
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+from io import BytesIO
 
 import tensorflow as tf
 
@@ -38,7 +39,29 @@ class Dino:
         self.child_number = child_number
         self.IMPROVISED_RATIO = IMPROVISED_RATIO
         #self.ml_model = pickle.load(open(ml_model, 'rb'))
-        self.ml_model = tf.keras.models.load_model(ml_model)
+        
+        model = tf.keras.models.load_model(ml_model)
+        
+         
+        converter = tf.lite.TFLiteConverter.from_keras_model(model)
+        tflite_model = converter.convert()
+        
+        
+        # Crear un objeto BytesIO y cargar el modelo TensorFlow Lite
+        model_stream = BytesIO(tflite_model)
+
+        # Crear un intérprete TensorFlow Lite desde los datos en memoria
+        interpreter = tf.lite.Interpreter(model_content=model_stream.getvalue())
+        
+        self.ml_model = interpreter
+        
+        self.ml_model.allocate_tensors()
+        
+        input_details = self.ml_model.get_input_details()
+        output_details = self.ml_model.get_output_details()
+        
+        self.input_details = input_details[0]['index']
+        self.output_details = output_details[0]['index']
 
     def jump(self):
         if self.action != Dino.JUMPING:
@@ -93,6 +116,39 @@ class Dino:
 
     def get_score(self):
         return self.steps - (self.fails *100) - (self.useless_actions * 5) #+ (self.usefull_actions * 5)
+    
+    
+    def predict(self, data):
+        # Obtener información de entrada y salida del modelo
+        #input_details = self.ml_model.get_input_details()
+        #output_details = self.ml_model.get_output_details()
+
+        # Preparar los datos de entrada para la predicción
+        #data = np.array(data).astype(np.float32)
+        
+        #print("Forma de entrada esperada:", input_details[0]['shape'])
+        #print("Forma de entrada dada:", data.shape)
+
+        #input_data = data.reshape(input_details[0]['shape'])
+        #print(input_data)
+        #print("Forma de entrada dada:", input_data.shape)
+
+
+        # Asignar los datos de entrada al tensor de entrada del modelo
+        #self.ml_model.set_tensor(input_details[0]['index'], np.array(data).astype(np.float32))
+        self.ml_model.set_tensor(self.input_details, np.array(data).astype(np.float32))
+
+        # Realizar la predicción
+        self.ml_model.invoke()
+
+        # Obtener los resultados de la predicción
+        #output_data = self.ml_model.get_tensor(output_details[0]['index'])
+        output_data = self.ml_model.get_tensor(self.output_details)
+        #print(output_data)
+        #predicted_label = np.argmax(output_data)  # Obtener la etiqueta predicha
+        #print("Etiqueta predicha:", predicted_label)
+        return output_data
+
 
     def think(self, obstacles, game_speed):
         data = []
@@ -114,6 +170,9 @@ class Dino:
             #sc=StandardScaler()
             #scaler = sc.fit(data)
             #X_scaled = scaler.transform(data)
+            
+            
+            #print("data",data)
 
             
             if (self.IMPROVISED_RATIO > 0):
@@ -122,7 +181,7 @@ class Dino:
 
                     #forzamos que salte
                     #pred = np.argmax(self.ml_model.predict_proba(data)[0])
-                    pred = np.argmax(self.ml_model.predict(data)[0])
+                    pred = np.argmax(self.predict(data)[0])
                     if pred == 1:
                         return 2
                     else:
@@ -134,12 +193,12 @@ class Dino:
                     #return np.argmin(np.argmax(pred))
                 else:
                     #return np.argmax(self.ml_model.predict_proba(data)[0])
-                    return np.argmax(self.ml_model.predict(data)[0])
+                    return np.argmax(self.predict(data)[0])
 
             else:
                 #return np.argmax(self.ml_model.predict_proba(data)[0])
-                return np.argmax(self.ml_model.predict(data)[0])
+                return np.argmax(self.predict(data)[0])
         else:
-            return np.argmax(self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
+            return np.argmax(self.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
             #return np.argmax(self.ml_model.predict_proba([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0])
             #return self.ml_model.predict([[self.rect.x,0,0,0,self.rect.y, game_speed]])[0]

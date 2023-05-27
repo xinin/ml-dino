@@ -5,9 +5,10 @@ from machine_learning.neural_network_tensorflow import generate_brains
 from game.data_colector import DataCollector
 import os
 import shutil
+import tensorflow as tf
 
-DINO_NUMBER = 20
-REPRODUCTION_LEVEL = 5
+DINO_NUMBER = 4
+REPRODUCTION_LEVEL = 50
 ITERATIONS = 100
 DYNAMIC_MUTATION = True
 MUTATION_BASED_ON_SCORE = True

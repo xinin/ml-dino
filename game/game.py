@@ -47,6 +47,7 @@ class Game:
         #Run the game loop
         now = datetime.datetime.now()
         while dead_dinos < max_dinos and (not real_death or (now - start_time).total_seconds() < max_time):
+            clock.tick(game_speed)
             INTERSECTION = False
             screen.fill(WHITE)
             array_text = [
@@ -139,7 +140,6 @@ class Game:
                 obstacle.draw(screen)
 
             pygame.display.update()
-            clock.tick(game_speed)
             steps = steps + 1
             steps_next_obstacle -=1
             #aumentar la velocidad segun los puntos
