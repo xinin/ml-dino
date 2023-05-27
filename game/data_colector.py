@@ -57,6 +57,9 @@ class DataCollector:
         folder = training_file[:training_file.rfind('/')]
         if not Path(folder).is_dir():
             os.mkdir(folder)
+            
+        print("score_file", score_file)
+        print("training_file", training_file)
         
         with open(score_file, 'r') as input_file, open(training_file, 'w') as output_file:
             csv_reader = reader(input_file)
@@ -64,6 +67,7 @@ class DataCollector:
             #rows_to_skip = 0
             previous_rows = []
             for row in csv_reader:
+                print("row", row)
                 #if rows_to_skip > 0:
                 #    # Skip this row and decrement the rows_to_skip counter
                 #    rows_to_skip -= 1
