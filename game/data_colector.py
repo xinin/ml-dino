@@ -14,12 +14,12 @@ class DataCollector:
            if obstacle.rect.x >= dino.rect.x:
                 file = None
                 if not Path(filename).is_file():
-                    with open(filename, 'w') as file:
+                    with open(filename, 'w',newline='') as file:
                         writer_obj = writer(file)
                         writer_obj.writerow(DataCollector.header)
                         file.close()
                 else:
-                    with open(filename, 'a') as file:
+                    with open(filename, 'a',newline='') as file:
                         writer_obj = writer(file)
                         writer_obj.writerow(
                             [
@@ -40,7 +40,7 @@ class DataCollector:
         
     def delete_last_action(folder, index):
         filename = folder+'/dino_'+str(index)+'.csv'
-        with open(filename, "r+") as f:
+        with open(filename, "r+",newline='') as f:
             current_position = previous_position = f.tell()
             while f.readline():
                 previous_position = current_position
@@ -61,7 +61,7 @@ class DataCollector:
         print("score_file", score_file)
         print("training_file", training_file)
         
-        with open(score_file, 'r') as input_file, open(training_file, 'w') as output_file:
+        with open(score_file, 'r',newline='') as input_file, open(training_file, 'w',newline='') as output_file:
             csv_reader = reader(input_file)
             csv_writer = writer(output_file)
             #rows_to_skip = 0
