@@ -41,11 +41,9 @@ class Dino:
         #self.ml_model = pickle.load(open(ml_model, 'rb'))
         
         model = tf.keras.models.load_model(ml_model)
-        
          
         converter = tf.lite.TFLiteConverter.from_keras_model(model)
         tflite_model = converter.convert()
-        
         
         # Crear un objeto BytesIO y cargar el modelo TensorFlow Lite
         model_stream = BytesIO(tflite_model)
@@ -150,7 +148,7 @@ class Dino:
         return output_data
 
 
-    def think(self, obstacles, game_speed):
+    def think(self, obstacles, game_speed, iteration):
         data = []
         obs = sorted(obstacles, key=lambda x: x.rect.x)    
         for obstacle in obs:
@@ -166,18 +164,19 @@ class Dino:
                 break
 
         if len(data) == 1:
-
+            
+            
             #sc=StandardScaler()
             #scaler = sc.fit(data)
             #X_scaled = scaler.transform(data)
             
-            
             #print("data",data)
-
+            #print("X_scaled",X_scaled)
             
+                      
             if (self.IMPROVISED_RATIO > 0):
                 improvised_chance = random.random()
-                if improvised_chance < self.IMPROVISED_RATIO:
+                if iteration > 0 and improvised_chance < self.IMPROVISED_RATIO/iteration:
 
                     #forzamos que salte
                     #pred = np.argmax(self.ml_model.predict_proba(data)[0])
