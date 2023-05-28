@@ -9,8 +9,8 @@ import tensorflow as tf
 import csv
 import pandas as pd
 
-DINO_NUMBER = 400
-REPRODUCTION_LEVEL = 50
+DINO_NUMBER = 200
+REPRODUCTION_LEVEL = 10
 ITERATIONS = 600
 DYNAMIC_MUTATION = True
 MUTATION_BASED_ON_SCORE = True
