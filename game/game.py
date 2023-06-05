@@ -95,7 +95,7 @@ class Game:
                                INTERSECTION = True
 
                 if not dino.death:
-                    action = dino.think(obstacles, game_speed)
+                    action = dino.think(obstacles, game_speed, iteration)
                     if action == 0:
                         dino.running()
                         running_dinos +=1

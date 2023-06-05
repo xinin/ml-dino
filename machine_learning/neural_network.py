@@ -50,7 +50,7 @@ def mutate(child, iteration, dynamic_mutation, mutation_based_on_score, max_scor
 
     if dynamic_mutation:
         if mutation_based_on_score:
-            mutation_rate= max(100/(max(int(max_score),0.01)),0.01) 
+            mutation_rate= min(max(100/(max(int(max_score),0.01)),0.01) ,1)
             mutation_magnitude= max(20/(max(int(max_score),0.01)), 0.05)
             #print("mutation_rate", mutation_rate)
             #print("mutation_magnitude", mutation_magnitude)
@@ -106,14 +106,20 @@ def reproduce(parent_model, mother_model, iteration, dynamic_mutation, mutation_
         else:
             return parent_model
         
-def learn_from_parents(child, parent, mother):
-    parent_data = parent['training_data']
-    mother_data = mother['training_data']
+def learn_from_parents(child, parent, mother, LEARN_FROM_ALL_THE_BEST):
 
-    df1 = pd.read_csv(parent_data)
-    df2 = pd.read_csv(mother_data)
+    df = None
+    
+    if LEARN_FROM_ALL_THE_BEST:
+         df = pd.read_csv('training_data/best_dinos_dataset.csv')
+    else:
+        parent_data = parent['training_data']
+        mother_data = mother['training_data']
 
-    df = pd.concat([df1, df2], axis=0)
+        df1 = pd.read_csv(parent_data)
+        df2 = pd.read_csv(mother_data)
+
+        df = pd.concat([df1, df2], axis=0)
 
     #print(df)
     #X = df.drop(['action', 'score', 'last_failed'], axis=1)
@@ -123,14 +129,14 @@ def learn_from_parents(child, parent, mother):
     X = df[_columns]
     X.columns = _columns
 
-    sc=StandardScaler()
-    scaler = sc.fit(X)
-    X_scaled = scaler.transform(X)
-
+    #sc=StandardScaler()
+    #scaler = sc.fit(X)
+    #X_scaled = scaler.transform(X)
+#
     y = df["action"]
     y.columns = ['action']
 
-    child.fit(X_scaled, y)
+    child.fit(X, y)
     return child
 
 def choose_two_with_bias(arr):
@@ -142,7 +148,7 @@ def choose_two_with_bias(arr):
     choices = random.choices(arr, weights=weights, k=2)
     return choices[0],choices[1]
 
-def generate_brains(iteration, timestamp, dino_child_number, best_dinos, dynamic_mutation, parents_in_generation, mutation_based_on_score, max_score, use_parent_knowledge):
+def generate_brains(iteration, timestamp, dino_child_number, best_dinos, dynamic_mutation, parents_in_generation, mutation_based_on_score, max_score, use_parent_knowledge, LEARN_FROM_ALL_THE_BEST):
     folder = 'models/'+str(int(timestamp))+'/'+str(iteration)
     os.mkdir(folder)
 
@@ -169,7 +175,7 @@ def generate_brains(iteration, timestamp, dino_child_number, best_dinos, dynamic
                 child = reproduce(parent_model, mother_model,iteration,dynamic_mutation, mutation_based_on_score, max_score)
                 
                 if use_parent_knowledge:
-                    child = learn_from_parents(child, parent, mother)
+                    child = learn_from_parents(child, parent, mother, LEARN_FROM_ALL_THE_BEST)
 
                 model_name = folder + '/model_'+str(i)+'.sav'
                 pickle.dump(child, open(model_name, 'wb'))

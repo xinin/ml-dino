@@ -91,7 +91,7 @@ class Dino:
     def get_score(self):
         return self.steps - (self.fails *100) - (self.useless_actions * 5) #+ (self.usefull_actions * 5)
 
-    def think(self, obstacles, game_speed):
+    def think(self, obstacles, game_speed, iteration):
         data = []
         obs = sorted(obstacles, key=lambda x: x.rect.x)    
         for obstacle in obs:
@@ -115,7 +115,7 @@ class Dino:
             
             if (self.IMPROVISED_RATIO > 0):
                 improvised_chance = random.random()
-                if improvised_chance < self.IMPROVISED_RATIO:
+                if iteration > 0 and improvised_chance < self.IMPROVISED_RATIO/iteration:
 
                     #forzamos que salte
                     pred = np.argmax(self.ml_model.predict_proba(data)[0])
